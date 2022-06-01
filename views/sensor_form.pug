@@ -1,0 +1,18 @@
+extends layout
+
+block content 
+    +navbar
+    section(class="prompt")
+        h1 Create new sensor
+        form(action="" method="post")
+            section
+                label(for="sensor_name") Sensor name
+                input(id="sensor_name" name="sensor_name" type="text" required value=(sensor === undefined) ? '' : sensor.name)
+            section
+                label(for="description") Description
+                textarea(id="description" name="description" placeholder="optional")
+            button(type="submit") Create
+    if errors 
+        ul
+            for error in errors
+                li!= error.msg

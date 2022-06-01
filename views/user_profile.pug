@@ -1,0 +1,40 @@
+extends layout
+
+block content
+    +navbar
+    section(class="profile")
+        h1 Profile
+        div(class="list-group")
+            a(class="list-group-item list-group-item-action" aria-current="true")
+                div(class="d-flex w-100 justify-content-between")
+                    small(class="mb-1") Username                 
+                div(class="d-flex w-100 justify-content-between")
+                    p(class="fs-5") #{name}
+                    small(class="mb-1") >
+            a(class="list-group-item list-group-item-action" aria-current="true")
+                div(class="d-flex w-100 justify-content-between")
+                    small(class="mb-1") Email                
+                div(class="d-flex w-100 justify-content-between")
+                    p(class="fs-5") #{user.email}
+                    small(class="mb-1") >        
+            a(class="list-group-item list-group-item-action" aria-current="true")
+                div(class="d-flex w-100 justify-content-between")
+                    small(class="mb-1") Phone Number                  
+                div(class="d-flex w-100 justify-content-between")
+                    p(class="fs-5") #{user.phone}
+                    small(class="mb-1") >
+            a(class="list-group-item list-group-item-action" aria-current="true")
+                div(class="d-flex w-100 justify-content-between")
+                    small(class="mb-1") Age              
+                div(class="d-flex w-100 justify-content-between")
+                    p(class="fs-5") #{user.age}
+                    small(class="mb-1") >
+            a(class="list-group-item list-group-item-action" data-bs-toggle="collapse" href="#collapse" role="button" aria-expanded="false" aria-controls="collapse")
+                div(class="d-flex w-100 justify-content-between")
+                    small(class="mb-1")  User ID        
+                div(class="d-flex w-100 justify-content-between")
+                    p(class="fs-6") Click here to show your unique user id. #[br]Please be careful with your user ID.
+                    small(class="mb-1") >
+            div(class="collapse" id="collapse")
+                div(class="card card-body").
+                    #{user._id}

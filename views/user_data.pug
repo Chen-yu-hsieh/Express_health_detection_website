@@ -1,0 +1,39 @@
+extends layout
+
+block source
+    script(src='javascripts/chart.js')
+    script(src="javascripts/user.js")
+    script(src="https://cdn.jsdelivr.net/npm/chart.js@3.8.0/dist/chart.min.js")
+    script(src="//cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js")
+    link(rel='stylesheet' href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css")
+
+
+block content
+    +navbar     
+    div(id='container')
+        p
+        a(class="btn btn-secondary" data-bs-toggle="collapse" href="#collapse" role="button" aria-expanded="false" aria-controls="collapse") #{sensor.name}
+        div(class="collapse" id="collapse")
+            div(class="card card-body").
+                Sensor ID: #{sensor._id} 
+                #[br]
+                Description:
+                #[br]
+                #{sensor.description}
+        div(id="table_container") 
+            table(id='table' class="hover" style="width:80%")
+                thead    
+                    tr
+                        th Date
+                        th Time 
+                        th Respiration Rate(RPM)
+                tbody
+                    each user_data in user_datas
+                        tr
+                            th #{user_data.date}
+                            th #{user_data.time} 
+                            th(id="values") #{user_data.data}
+            div(id="canvas_container")
+                canvas(id="chart" width="10%" )
+        
+    

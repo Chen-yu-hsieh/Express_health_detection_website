@@ -1,0 +1,35 @@
+extends layout 
+		
+block content        
+	section(class="prompt")
+		h3 We Health
+		h1 Sign up
+		hr
+		form(action="/signup" method="post")
+			section
+				label(for="username") Username
+				input(id="username" name="username" type="text" required value=(user === undefined ? '' : user.username))
+			section
+				label(for="password") Password
+				input(id="password" name="password" type="password" required)
+				p.instructions 6-12 letters or numbers
+			section
+				label(for="pd_confirm") Confirm password
+				input(id="pd_confirm" name="pd_confirm" type="password" required)
+			section
+				label(for="email") Email
+				input(id="email" name="email" type="email" required value=(user === undefined ? '' : user.email))
+			section
+				label(for="phone") Phone number
+				input(id="phone" name="phone" type="string" required value=(user === undefined ? '' : user.phone))
+			section
+				label(for="age") Age
+				input(id="age" name="age" type="number" required value=(user === undefined ? '' : user.age))
+			button(type="submit") Sign up
+		p(class="help") Already have an account? 
+			a(href="/login") Sign in
+	if errors 
+		ul
+			for error in errors
+				li!= error.msg
+	<p> #{messages}		
