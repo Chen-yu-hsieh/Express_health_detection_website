@@ -2,7 +2,7 @@
   "name": "respiration-detect",
   "version": "0.0.0",
   "engines": {
-    "node": "8.9.1"
+    "node": "^12.19.0"
   },
   "private": true,
   "scripts": {
