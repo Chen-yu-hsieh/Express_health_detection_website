@@ -10,7 +10,7 @@ var SensorSchema = new Schema(
   }
 );
 
-// Virtual for book's URL
+// Virtual for sensor's URL
 SensorSchema
 .virtual('url')
 .get(function () {

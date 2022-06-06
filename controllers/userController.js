@@ -7,6 +7,34 @@ var bcrypt = require('bcrypt')
 const { body,validationResult } = require("express-validator");
 const user = require('../models/user');
 
+function days_in_month(year, month){
+    switch(month){
+        case 1: return 31;
+        case 2: {
+            if( year%400 == 0 || ( year%4 == 0 && year % 100!=0 ))
+                return 29;
+            else
+                return 28;
+        }
+        case 3: return 31;
+        case 4: return 30;
+        case 5: return 31;
+        case 6: return 30;
+        case 7: return 31;
+        case 8: return 31;
+        case 9: return 30;
+        case 10: return 31;
+        case 11: return 30;
+        case 12: return 31;
+        default : return 30;
+    }
+};
+
+function number_stringify(number){
+    if(number < 10) return '0' + String(number);
+    else return  String(number);
+};
+
 exports.user_login_get = function(req, res, next){
     if(req.isAuthenticated()){
         var user_home_url = '/user/' + req.body.username;
@@ -31,11 +59,11 @@ exports.user_logout = function(req, res) {
     req.session.destroy(() => {
       res.clearCookie('connect.sid')
       res.redirect('/login')
-    })}
+})};
 
 exports.user_signup_get = function(req, res) {
     res.render('signup');
-}
+};
 
 exports.user_signup_post = [
     // Validate and sanitize fields.
@@ -65,6 +93,7 @@ exports.user_signup_post = [
         }
         else if(req.body.password !== req.body.pd_confirm){
             res.render('signup', {user: user, messages: "Password is not the same." });
+            return;
         }
         else {
             // Data from form is valid.
@@ -77,7 +106,7 @@ exports.user_signup_post = [
             });
         }
     }
-]
+];
 
 exports.user_home_get = function(req, res, next){
     async.parallel({
@@ -90,32 +119,140 @@ exports.user_home_get = function(req, res, next){
         res.locals.name = req.user.username;
         res.render('user_home', {user_sensors: results.sensors});
     });
-}
+};
 
-exports.user_data_get = function(req, res, next){    
-    async.parallel({
-        datas: function(callback) {
-            Data.find({'sensor': req.params.sensor_id})
+exports.user_data_get = function(req, res, next){
+    var month, days;
+    var dayAvg = [];
+    
+    if(!req.query.month || isNaN(req.query.month)){
+        var today = new Date();
+        month = today.getMonth() + 1;
+    }
+    else{
+        month = Number(req.query.month);
+    }
+    days = days_in_month(month);
+    month = number_stringify(month);
+
+    function render(){
+        async.parallel({
+            allData: function(callback) {
+                Data.find({'sensor': req.params.sensor_id})
+                .exec(callback)
+            },
+            sensors: function(callback) {
+                Sensor.find({'user': req.user._id})
+                .exec(callback)
+            },
+            sensor: function(callback) {
+                Sensor.findById(req.params.sensor_id)
+                .exec(callback)
+            }
+        }, function(err, results) {
+            if (err) {
+                var err = new Error('404 not found');
+                err.status = 404;
+                return next(err);
+            }
+            res.locals.name = req.user.username;
+            res.render('user_data', {
+                allData: results.allData, 
+                dayAvg: dayAvg,
+                days: days,
+                month: month,
+                user_sensors: results.sensors,
+                sensor: results.sensor  
+            });
+        })
+    };
+
+    async.times(
+        days,
+        function(count, callback){
+            Data.find({'month': month, 'day': number_stringify(count+1)}, "data")
             .exec(callback)
         },
-        sensors: function(callback) {
-            Sensor.find({'user': req.user._id})
-            .exec(callback)
-        },
-        sensor: function(callback) {
-            Sensor.findById(req.params.sensor_id)
-            .exec(callback)
+        function(err, results){
+            if(err){
+                var err = new Error('404 not found');
+                err.status = 404;
+                return next(err);
+            }
+            else {
+                // Calculate daily average resp. rate
+                for(let i=0;i<days;i++){
+                    var sum = 0;
+                    len = Object.keys(results[i]).length;
+                    if(len != 0){
+                        Object.keys(results[i]).forEach(key => {
+                            sum += results[i][key].data;
+                        });
+                        dayAvg[i] = sum / len;
+                    }
+                    else dayAvg[i] = 0;
+                };
+                render();
+            }
         }
-    }, function(err, results) {
-        if (err) {
-            var err = new Error('404 not found');
-            err.status = 404;
-            return next(err);
+    );
+};
+
+exports.user_data_post = [
+    body('user').trim().escape(),
+    body('sensor').trim().escape(),
+    body('data').trim().escape().isNumeric().withMessage('Invalid value in data'),
+    body('year').trim().isLength({min:4, max:4}).escape().withMessage('Invalid format in year(yyyy)'),
+    body('month').trim().isLength({min:2, max:2}).escape().withMessage('Invalid format in month(mm)'),
+    body('day').trim().isLength({min:2, max:2}).escape().withMessage('Invalid format in day(dd)'),
+    body('time').trim().isLength({min:8, max:8}).escape().withMessage('Invalid format in time(hh:mm:ss)'),
+
+    (req, res, next) => {
+        const errors = validationResult(req);
+
+        async.parallel({
+            user: function(callback) {
+                User.findById(req.body.user)
+                .exec(callback)
+            },
+            sensor: function(callback){
+                Sensor.find({'user': req.body.user, 'name': req.body.sensor})
+                .exec(callback)
+            }
+        }, function(err, results) {
+            if (err) { return next(err); }
+
+            if(!results.user) res.send("Can not find user");         
+            else if(!results.sensor) res.send("Can not find sensor");
+            
+        });
+
+        if(!errors.isEmpty()){
+            var msg = [];
+            error = errors.array();
+            error.forEach(item => msg.push(item['msg']));
+            res.send(msg);
         }
-        res.locals.name = req.user.username;
-        res.render('user_data', {user_datas: results.datas, user_sensors: results.sensors, sensor: results.sensor});
-    });
-}
+        else{
+            var data = new Data({
+                user : req.body.user,
+                sensor : req.body.sensor,
+                data : req.body.data,
+                year : req.body.year,
+                month : req.body.month,
+                day : req.body.day,
+                time : req.body.time
+            });
+
+            data.save(function(err){
+                if(err) return next(err);
+                else res.sendStatus(200);
+            });
+        }
+    }
+];
+
+
 
 exports.sensor_create_get = function(req, res, next){
     async.parallel({
@@ -128,7 +265,7 @@ exports.sensor_create_get = function(req, res, next){
         res.locals.name = req.user.username;
         res.render('sensor_form', {user_sensors: results.sensors});
     });
-}
+};
 
 exports.user_profile_get = function(req, res, next){
     async.parallel({
@@ -145,14 +282,12 @@ exports.user_profile_get = function(req, res, next){
         res.locals.name = req.user.username;
         res.render('user_profile', {user: results.user, user_sensors: results.sensors});
     });
-}
+};
 
 exports.sensor_create_post = [
-    // Validate and sanitize fields.
     body('sensor_name').trim().isLength({ max: 30, min: 1 }).escape().withMessage('sensor name must contain 1 to 30 characters'),
 
     (req, res, next) => {
-        // Extract the validation errors from a request.
         const errors = validationResult(req);
 
         var sensor = new Sensor({
@@ -170,7 +305,10 @@ exports.sensor_create_post = [
             }, function(err, results) {
                 if (err) { return next(err); }
                 res.locals.name = req.user.username;
-                res.render('sensor_form', {sensor: sensor, user_sensors: results.sensors, errors: errors.array()});
+                res.render('sensor_form', {sensor: sensor,
+                    user_sensors: results.sensors,
+                    errors: errors.array()
+                });
             });
         }
         else {
@@ -180,4 +318,4 @@ exports.sensor_create_post = [
             });
         }
     }
-]
+];

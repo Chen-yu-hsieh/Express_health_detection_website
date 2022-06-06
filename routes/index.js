@@ -74,6 +74,8 @@ router.get('/signup', user_controller.user_signup_get);
 
 router.post('/signup', user_controller.user_signup_post);
 
+router.post('/user', user_controller.user_data_post);
+
 router.get('/user/:username', ensureAuthenticated, ensureUser, user_controller.user_home_get);
 
 router.get('/user/:username/create', ensureAuthenticated, ensureUser, user_controller.sensor_create_get);
@@ -83,6 +85,5 @@ router.post('/user/:username/create', ensureAuthenticated, ensureUser, user_cont
 router.get('/user/:username/profile', ensureAuthenticated, ensureUser, user_controller.user_profile_get);
 
 router.get('/user/:username/:sensor_id', ensureAuthenticated, ensureUser, user_controller.user_data_get);
-
 
 module.exports = router;

@@ -1,62 +1,132 @@
 $(document).ready(function() {
     var numRows = 10;
-    var data = [];
-    var labels = [];
-    var length, myChart;
+    var lineData = [], barData = [];
+    var lineLabels = [], barLabels = [];
+    var lineChart, barChart;
+    var length;
 
-    function getData(){
-        data = [];
-        $('th#values').each(function(){
+    function getLineData(){
+        lineData = [];
+        $('th#uValues').each(function(){
             value = Number($(this).html());
-            data.push(value);
+            lineData.push(value);
         });
     }
 
-    function createLabels(){
-        labels = [];
-        length = (data.length < numRows) ? data.length : numRows;
+    function createLineLabels(){
+        lineLabels = [];
+        length = (lineData.length < numRows) ? lineData.length : numRows;
         
         for(i=0; i < length; i++){
-            labels[i] = String(i+1);
+            lineLabels[i] = String(i+1);
         };
     };
 
-    function drawChart(){
-        $canvas = $('#chart');
-        ctx = $canvas[0].getContext('2d');
-        myChart = new Chart(ctx, {
+    function drawLineChart(){
+        $canvas = $("#lineChart");
+        ctx = $canvas[0].getContext("2d");
+        lineChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: labels,
+                labels: lineLabels,
                 datasets: [{
-                    label: '呼吸率',
-                    data: data,
+                    label: "Respiration Rate",
+                    data: lineData,
                     fill: false,
-                    borderColor: 'rgb(75, 192, 192)',
+                    borderColor: "rgb(75, 192, 192)",
                 }]
             },
         }
         );
     }
 
-    function draw(){
-        getData();
-        createLabels();
-        drawChart();  
+    function getBarData(days){
+        barData = [];
+        for(i=0;i<days;i++){
+            value = Number($("span#Day"+(i+1)).html());
+            barData.push(value);
+        };
+        
+    };
+
+    function createBarLabels(days){
+        barLabels = [];
+            
+        for(i=0; i < days; i++){
+            barLabels[i] = String(i+1);
+        };
+    };
+
+    function drawBarChart(){
+        $canvas = $("#barChart");
+        ctx = $canvas[0].getContext("2d");
+        barChart = new Chart(ctx, {
+            type: "bar",
+            data: {
+                labels: barLabels,
+                datasets: [{
+                    label: "Average Respiration Rate",
+                    data: barData,
+                    backgroundColor: ["#FFEC8B"],
+                }]
+            },
+            options: {
+                scales:{
+                    x:{
+                        title: {
+                            display: true,
+                            text: 'Days in month'
+                        }                        
+                    }
+                },
+                plugins:{
+                    title:{
+                        display: true,
+                        text: 'Daily Average Respiration Rate in ' + $('#select_month').find("option:selected").text()
+                    }                  
+                }
+            }
+        });
     }
 
-    draw();
+    function createLineChart(){
+        getLineData();
+        createLineLabels();
+        drawLineChart();  
+    }
+
+    function createBarChart(){
+        days = Number($("span#days").html());
+        getBarData(days);
+        createBarLabels(days);
+        drawBarChart();  
+    }
+
+
+    createLineChart();
+    createBarChart();
 
     $('#table').DataTable();
 
-    $('select').change(function(){
-        numRows = $('select').val();
-        myChart.destroy();
-        draw();
+    $('select[name="table_length"]').change(function(){
+        numRows = $(this).val();
+        lineChart.destroy();
+        createLineChart();
     });
  
     $('#table_paginate').on('click', function(){
-        myChart.destroy();
-        draw();
+        lineChart.destroy();
+        createLineChart();
     })
+
+    $('#select_month').change(function(){
+        const re = /\?month=\w*/;
+        month = $(this).val();
+        url = window.location.href;
+        if(!url.match(re))
+            url = url + "?month=" + month;
+        else
+            url = url.replace(re, "?month="+month);
+        $(location).prop('href', url); 
+    });
 });
