@@ -54,11 +54,22 @@ textarea{
 	top:120px;
 }
 
-/*
-.carousel{
-	margin: 50px auto;
-	padding: 280px;
-}*/
+
+.carousel_container{
+	padding:100px;
+	margin: auto;
+	height:50%;
+	width:60%;
+}
+
+img#carousel{
+	height:550px;
+	/*width:500px;*/
+}
+
+#carousel_btn:hover{
+	background-color:gray;
+}
 
 /* --------------------------------------  */
 .prompt {

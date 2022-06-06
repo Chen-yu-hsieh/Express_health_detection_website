@@ -34,7 +34,8 @@ html(lang='en')
                         li(class="nav-item")
                             a(class="nav-link active" aria-current="page" href="/file/post.zip" download) API
                         li(class="nav-item")
-                            a(class="nav-link active" aria-current="page" href="#") Help
+                            - var url = "user/" + name + "/help"
+                            a(class="nav-link active" aria-current="page" href=url) Help
                     form(class="d-flex" role="search")
                         div(class="dropdown")
                             button(class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownCenterBtn" data-bs-toggle="dropdown" aria-expanded="false") #{name}

@@ -82,6 +82,8 @@ router.get('/user/:username/create', ensureAuthenticated, ensureUser, user_contr
 
 router.post('/user/:username/create', ensureAuthenticated, ensureUser, user_controller.sensor_create_post);
 
+router.get('/user/:username/help', ensureAuthenticated, ensureUser, user_controller.user_help_get);
+
 router.get('/user/:username/profile', ensureAuthenticated, ensureUser, user_controller.user_profile_get);
 
 router.get('/user/:username/:sensor_id', ensureAuthenticated, ensureUser, user_controller.user_data_get);

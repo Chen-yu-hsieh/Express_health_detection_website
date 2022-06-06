@@ -257,8 +257,6 @@ exports.user_data_post = [
     }
 ];
 
-
-
 exports.sensor_create_get = function(req, res, next){
     async.parallel({
         sensors: function(callback) {
@@ -269,6 +267,19 @@ exports.sensor_create_get = function(req, res, next){
         if (err) { return next(err); }
         res.locals.name = req.user.username;
         res.render('sensor_form', {user_sensors: results.sensors});
+    });
+};
+
+exports.user_help_get = function(req, res, next){
+    async.parallel({
+        sensors: function(callback) {
+            Sensor.find({'user': req.user._id})
+            .exec(callback)
+        }
+    }, function(err, results) {
+        if (err) { return next(err); }
+        res.locals.name = req.user.username;
+        res.render('help', {user_sensors: results.sensors});
     });
 };
 
