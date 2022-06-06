@@ -170,8 +170,13 @@ exports.user_data_get = function(req, res, next){
     async.times(
         days,
         function(count, callback){
-            Data.find({'month': month, 'day': number_stringify(count+1)}, "data")
-            .exec(callback)
+            Data.find({
+                'user' : req.user._id,
+                'sensor': req.params.sensor_id,
+                'month': month,
+                'day': number_stringify(count+1)
+                }, 
+                "data").exec(callback)
         },
         function(err, results){
             if(err){
@@ -220,10 +225,10 @@ exports.user_data_post = [
                 .exec(callback)
             }
         }, function(err, results) {
-            if (err) { return next(err); }
+            if (err) return next(err); 
 
-            if(!results.user) res.send("Can not find user");         
-            else if(!results.sensor) res.send("Can not find sensor");
+            if(!results.user) res.status(422).send("Can not find user");
+            else if(!results.sensor) res.status(422).send("Can not find sensor");
             
         });
 
@@ -231,7 +236,7 @@ exports.user_data_post = [
             var msg = [];
             error = errors.array();
             error.forEach(item => msg.push(item['msg']));
-            res.send(msg);
+            res.status(422).send(msg);
         }
         else{
             var data = new Data({
