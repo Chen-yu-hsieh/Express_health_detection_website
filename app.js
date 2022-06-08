@@ -10,7 +10,7 @@ var express = require('express')
 
 //Set up mongoose connection
 var mongoose = require('mongoose');
-var db_url = 'mongodb+srv://Chen-Yu:finalproject@cluster0.kvowd.mongodb.net/?retryWrites=true&w=majority' 
+var db_url = 'mongodb+srv://<username>:<password>@cluster0.kvowd.mongodb.net/?retryWrites=true&w=majority' 
 var mongoDB = process.env.MONGODB_URL || db_url;
 mongoose.connect(mongoDB,  {useNewUrlParser: true, useUnifiedTopology: true});
 mongoose.Promise = global.Promise;

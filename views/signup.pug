@@ -2,7 +2,7 @@ extends layout
 		
 block content        
 	section(class="prompt")
-		h3 We Health
+		h3 iHealth
 		h1 Sign up
 		hr
 		form(action="/signup" method="post")
@@ -25,11 +25,11 @@ block content
 			section
 				label(for="age") Age
 				input(id="age" name="age" type="number" required value=(user === undefined ? '' : user.age))
-			button(type="submit") Sign up
+			button(type="submit" id="submit_btn") Sign up
 		p(class="help") Already have an account? 
 			a(href="/login") Sign in
 	if errors 
 		ul
 			for error in errors
 				li!= error.msg
-	<p> #{messages}		
+	p #{messages}		
