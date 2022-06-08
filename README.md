@@ -1,22 +1,37 @@
 # Express_health_detection_website
 
-## Website structure
-This website is based on the Express framework and uses the MongoDB database to store users' data. The purpose of the website is to provide users with access to the data detected from our works and is deployed on the heroku platform. The following is the list to be developed:
+## Introduction
+Runtime Environment：Node.JS
+Web Framework：Express
+Template Engine：Pug(aka Jade)
+Cloud Platform：Heroku
+Database：MongoDB
 
-* Register, log in, log out
+
+## Features
+This website is based on the Express framework and uses the MongoDB database to store users' data. The purpose of the website is to provide users with access to the data detected from your sensors and is deployed on the heroku platform. The following are the features of this website:
+
+* A simple and easy GUI
+* Register, log in and log out
+* Home page
 * Display available sensors 
 * Create new sensor
-* Display 50 records at once
-* The function of 「More...」
-* Display the user's respiration rate in a line graph or other easily observable way
-* A simple and easy GUI
+* Display user's records in table
+* Display the user's data in charts
+* API installation
+* Help page
+* User's profile
+
+## Example
+you can visit [here](https://health-detection.herokuapp.com) to see what it looks like
+
 
 ## Set-up(local environment)
-Step0. Download NodeJS、Github
+Step0. Download NodeJS、Git
 
 Step1. Install the code zip or run the commnad in your terminal as following:
 ```
-git clone https://github.com/Chen-yu-hsieh/Express_Website_Test.git
+git clone https://github.com/Chen-yu-hsieh/Express_health_detection_website.git
 ```
 Step2. Navigate into the new repo
 ```
@@ -30,7 +45,7 @@ npm install
 
 Step4. Visit [MongoDB](https://www.mongodb.com/atlas/database)to create a new account and cluster. If you have some problems due to the installation, please visit[here](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose#setting_up_the_mongodb_database)
 
-Step5. Navigate database your built above and follow this: overview > connect > conect your application > copy your URL and open app.js > find the line that sets the MongoDB connection variable. It will look something like this:
+Step5. Navigate database your built above and follow this: overview > connect > conect your application > copy your URL and open app.js in this repo> find the line that sets the MongoDB connection variable. It will look something like this:
 ```
 var db_url = 'mongodb+srv://<Your username>:<Your password>@<cluster name>.kvowd.mongodb.net/?retryWrites=true&w=majority'
 ```
@@ -40,7 +55,7 @@ Step6. Start the server
 ```
 npm start
 ```
-or by nodemon
+or start by nodemon
 ```
 npm run devstart
 ```
