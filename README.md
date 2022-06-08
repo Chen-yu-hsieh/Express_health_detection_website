@@ -1,11 +1,11 @@
 # Express_health_detection_website
 
-## Introduction
-Runtime Environment：Node.JS
-Web Framework：Express
-Template Engine：Pug(aka Jade)
-Cloud Platform：Heroku
-Database：MongoDB
+## Environment introduction
+* Runtime Environment：Node.JS
+* Web Framework：Express
+* Template Engine：Pug(aka Jade)
+* Cloud Platform：Heroku
+* Database：MongoDB
 
 
 ## Features
