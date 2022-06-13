@@ -43,7 +43,7 @@ Step3. Install dependecies
 npm install
 ```
 
-Step4. Visit [MongoDB](https://www.mongodb.com/atlas/database)to create a new account and cluster. If you have some problems due to the installation, please visit[here](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose#setting_up_the_mongodb_database)
+Step4. Visit [MongoDB](https://www.mongodb.com/atlas/database) to create a new account and cluster. If you have some problems due to the installation, please visit [here](https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose#setting_up_the_mongodb_database)
 
 Step5. Navigate database your built above and follow this: overview > connect > conect your application > copy your URL and open app.js in this repo> find the line that sets the MongoDB connection variable. It will look something like this:
 ```
